@@ -1,10 +1,30 @@
+---
+title: "Resampling - Cross Validation and the Bootstrap"
+author: "José Fortuny"
+date: "Friday, April 10, 2015"
+output: pdf_document
+---
+
+This document describes the process used in duplicating the labs for chapter 5 of the ISLR book.
+
+# Preparing the Environment
+
+We start with the code that sets us the environment and creates a training (and by default a test) dataset:
+
+```{r}
 ## Cross Validation
 
 # Prepare the environment
 library (ISLR)
 set.seed(1)
 train <- sample(392, 196)
+```
 
+# Preparing the data and obtaining the estimates from the sample
+
+Wr will use the Auto dataset to illustrate the concepts of Cross Validation. But first we prepare the data to eliminate NA values and use the "only" existing datase we have to calculate the residuals after fitting both a linear and a quadratic model.
+
+```{r}
 # Use the Auto dataset to fit a linear model
 # Fix the NA values in horsepower first
 Auto[is.na(Auto$horsepower),c("horsepower")] <- mean(Auto$horsepower, na.rm=T)
@@ -13,12 +33,22 @@ mean((Auto$mpg - predict(lm.fit, Auto))[-train]^2)
 # And to fit a polynomial model
 lm.fit2 <- lm(mpg[train]~poly(horsepower[train],2),data=Auto)
 mean((Auto$mpg[train] - predict(lm.fit2,Auto))[-train]^2)
+```
 
+# Cross Validation
+For the sections that follow we will use the **boot** library to repeat actions automatically. We will also use the **glm** (Generalized Linear Model) function to fit the models, even for linear regression, as it provides the function **cv.glm** to run the Cross Validations (CV).
+
+## Leave One Cross Validation
+
+Since we're using a continuous variable as the label and a continuous variable as predictor we will use the error in the test dataset to calculate the standard error of the residuals for different order polynomial functions, as follows:
+
+```{r}
 # Leave one out Cross Validation (LOOCV)
 library(boot)
-glm.fit <- glm(mpg~horsepower, data=Auto)
-#cv.err <- cv.glm(Auto, glm.fit)
-#cv.err$delta
+# glm.fit <- glm(mpg~horsepower, data=Auto)
+# cv.err <- cv.glm(Auto, glm.fit)
+# cv.err$delta
+
 # fit through the fifth degree polynomial
 cv.error <- rep(0,5)
 for (i in 1:5) {
@@ -28,7 +58,12 @@ for (i in 1:5) {
 cv.error
 plot(cv.error)
 lines(cv.error)
+```
+Note that the for loop cycles through 5 cases and, in each case, we run a fit of a polynomial of degree equal to the iterator. For that polynomial we run a CV process which, in this case, since there is no parameter K passed to the function cv.glm, results in a default K = 1 or LOOCV
 
+## K-Fold Cross Validation
+
+```{r}
 # k-fold CV
 set.seed(17)
 cv.error.10 = rep(0,10)
@@ -39,6 +74,7 @@ for (i in 1:10) {
 cv.error.10
 plot(cv.error.10)
 lines(cv.error.10)
+```
 
 # The Bootstrap
 # This is for the example of the investment selection in section 5.2
