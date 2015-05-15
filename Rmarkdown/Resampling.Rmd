@@ -9,7 +9,7 @@ This document describes the process used in duplicating the labs for chapter 5 o
 
 # Preparing the Environment
 
-We start with the code that sets us the environment and creates a training (and by default a test) dataset:
+We start with the code that sets the environment and creates a training (and by default a test) dataset:
 
 ```{r}
 ## Cross Validation
@@ -80,7 +80,7 @@ lines(cv.error.10)
 
 In the Bootstrap we create samples, of the same size as the data available, with replacement and use these samples as training data. Then we can use the resulting residuals to more accurately extimate the variability of the model.
 
-The bootstrap can be applied to models of any kind, as we can see in the example that starts us in which we're trying to estimate the value of $\alpha$, the proportion of an investment to place in one of two possible investment options.
+The bootstrap can be applied to models of any kind, as we can see in the example that starts this section in which we're trying to estimate the value of $\alpha$, the proportion of an investment to place in one of two possible investment options.
 
 ```{r}
 # This is for the example of the investment selection in section 5.2
