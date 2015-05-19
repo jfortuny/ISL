@@ -29,3 +29,55 @@ fit.3=lm(wage∼poly(age,3),data=Wage)
 fit.4=lm(wage∼poly(age,4),data=Wage)
 fit.5=lm(wage∼poly(age,5),data=Wage)
 anova(fit.1,fit.2,fit.3,fit.4,fit.5)
+
+# Does an individual earn more than $250K per year?
+fit <- glm(I(wage>250) ~ poly(age,4), data=Wage, family="binomial")
+preds <- predict(fit, newdata=list(age=age.grid), se=T)
+pfit <- exp(preds$fit)/(1 + exp(preds$fit))
+se.bands.logit <- cbind(preds$fit + 2*preds$se.fit, preds$fit - 2*preds$se.fit)
+se.bands <- exp(se.bands.logit) / (1 + exp(se.bands.logit))
+plot(age, I(wage>250), xlim=agelims, type="n", ylim=c(0,0.2))
+points(jitter(age), I((wage>250)/5), cex=0.5, pch="|", col="darkgrey")
+lines(age.grid, pfit, lwd=2, col="blue")
+matlines(age.grid, se.bands, lwd=1, col="red", lty=3)
+
+
+# 7.8.2 - Splines
+library(splines)
+
+# Fit a cubic spline
+fit <- lm(wage ~ bs(age, knots=c(25,40,60)), data=Wage)
+pred <- predict(fit, newdata=list(age=age.grid), se=T)
+plot(age, wage, col="gray")
+lines(age.grid, pred$fit, lwd=2)
+lines(age.grid, pred$fit + 2*pred$se, lty="dashed", lwd=2)
+lines(age.grid, pred$fit - 2*pred$se, lty="dashed", lwd=2)
+
+# Fit a natural spline
+fit2 <- lm(wage ~ ns(age, df=4), data=Wage)
+pred2 <- predict(fit2, newdata=list(age=age.grid), se=T)
+lines(age.grid, pred2$fit, lwd=2, col="red")
+
+# Fit s smootihing spline
+plot(age,wage,xlim=agelims,cex=.5,col="darkgrey")
+title("Smoothing Spline")
+fit=smooth.spline(age,wage,df=16)
+fit2=smooth.spline(age,wage,cv=TRUE)
+lines(fit,col="red",lwd=2)
+lines(fit2,col="blue",lwd=2)
+fit2$df
+legend("topright",legend=c("16 DF","6.8 DF"),
+       col=c("red "," blue "),lty =1, lwd =2, cex =.8)
+
+# Fit local regression
+plot(age ,wage ,xlim=agelims ,cex =.5, col ="darkgrey")
+title ("Local Regression")
+fit=loess(wage∼age,span=.2,data=Wage)
+fit2=loess(wage∼age,span=.5,data=Wage)
+lines(age.grid ,predict (fit ,data.frame(age=age.grid)),
+      col ="red ",lwd =2)
+lines(age.grid ,predict (fit2 ,data.frame(age=age.grid)),
+      col =" blue",lwd =2)
+legend ("topright",legend =c("Span =0.2" ," Span =0.5") ,
+        col=c("red "," blue "),lty =1, lwd =2, cex =.8)
+
