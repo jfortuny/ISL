@@ -81,3 +81,16 @@ lines(age.grid ,predict (fit2 ,data.frame(age=age.grid)),
 legend ("topright",legend =c("Span =0.2" ," Span =0.5") ,
         col=c("red "," blue "),lty =1, lwd =2, cex =.8)
 
+# 7.8.3 GAMs
+library(gam)
+# Predict wage as a function of year, age and education (qualitative predictor)
+# and use natural splines for the continuous predictors
+gam1 <- lm(wage ~ ns(year,4) + ns(age,5) + education, data=Wage)
+
+# Using the gam library
+gam.m3=gam(wage∼s(year,4)+s(age,5)+education,data=Wage)
+par(mfrow=c(1,3))
+plot(gam.m3, se=TRUE, col="blue")
+plot.gam(gam1, se=TRUE, col="red")
+# Now determine which of these three models is best: a GAM that excludes year, a
+# GAM that uses a linear function of year, or a GAM that uses a spline function of year
