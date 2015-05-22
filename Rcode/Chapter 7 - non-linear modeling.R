@@ -92,5 +92,13 @@ gam.m3=gam(wage∼s(year,4)+s(age,5)+education,data=Wage)
 par(mfrow=c(1,3))
 plot(gam.m3, se=TRUE, col="blue")
 plot.gam(gam1, se=TRUE, col="red")
-# Now determine which of these three models is best: a GAM that excludes year, a
-# GAM that uses a linear function of year, or a GAM that uses a spline function of year
+# Now determine which of these three models is best: a GAM that excludes year (M1), a
+# GAM that uses a linear function of year (M2), or a GAM that uses a spline function
+# of year (M3)
+gam.m1=gam(wage∼s(age ,5) + education ,data=Wage)
+gam.m2=gam(wage∼year+s(age ,5)+education ,data=Wage)
+anova(gam.m1 ,gam.m2 ,gam.m3,test="F")
+summary(gam.m3)
+summary(gam.m2)
+# to predict
+preds <- predict(gam.m2, newdata=Wage)
