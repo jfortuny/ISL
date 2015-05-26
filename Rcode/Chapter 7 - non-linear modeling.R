@@ -83,6 +83,7 @@ legend ("topright",legend =c("Span =0.2" ," Span =0.5") ,
 
 # 7.8.3 GAMs
 library(gam)
+library(akima)
 # Predict wage as a function of year, age and education (qualitative predictor)
 # and use natural splines for the continuous predictors
 gam1 <- lm(wage ~ ns(year,4) + ns(age,5) + education, data=Wage)
@@ -95,6 +96,7 @@ plot.gam(gam1, se=TRUE, col="red")
 # Now determine which of these three models is best: a GAM that excludes year (M1), a
 # GAM that uses a linear function of year (M2), or a GAM that uses a spline function
 # of year (M3)
+# The S() function in GAM is used to create smooth splines
 gam.m1=gam(wage∼s(age ,5) + education ,data=Wage)
 gam.m2=gam(wage∼year+s(age ,5)+education ,data=Wage)
 anova(gam.m1 ,gam.m2 ,gam.m3,test="F")
@@ -102,3 +104,10 @@ summary(gam.m3)
 summary(gam.m2)
 # to predict
 preds <- predict(gam.m2, newdata=Wage)
+
+# Using local regression as part of the GAM; the lo() function is used as a member of the GAM
+gam.lo <- gam(wage ~ s(year, df=4) + lo(age, span=0.7) + education, data=Wage)
+plot.gam(gam.lo, se=TRUE, col="green")
+# We can also use the lo() function to create interactions before calling GAM
+gam.lo.i <- gam(wage∼lo(year, age, span=0.5) + education, data=Wage)
+plot(gam.lo.i)
