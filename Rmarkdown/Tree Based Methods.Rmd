@@ -1,0 +1,31 @@
+---
+title: "Chapter 8 - Tree-Based Methods"
+author: "José Fortuny"
+date: "June 1, 2015"
+output: html_document
+---
+
+# 8.3 Lab: Decision Trees
+
+The *tree* library is used to construct regression and classification trees. We also use the *ISLR* package for the sample data.
+
+```{r}
+library(tree)
+library(ISLR)
+attach(Carseats)
+View(Carseats)
+```
+
+## 8.3.1 Fitting Classification Trees
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
